@@ -7,3 +7,4 @@ This is a java application which manages heavy tasks running.
 	IntelliJ IDEA 15.0.4
 ## Version control
 	GIT on private GitHub repository:
+	    https://github.com/altostratous/runner.git
