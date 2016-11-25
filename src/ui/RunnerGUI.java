@@ -12,7 +12,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import org.omg.CORBA.Environment;
 import service.RunnerClient;
+import service.RunnerServer;
 import ui.views.LongTaskView;
 import util.LongTask;
 
@@ -97,6 +99,7 @@ public class RunnerGUI extends Application implements Observer {
     @FXML
     public void addTask() throws MalformedURLException, ClassNotFoundException {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(RunnerGUI.class.getProtectionDomain().getCodeSource().getLocation().getPath()));
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Class. (*.class)", "*.class"));
         File jobClass = fileChooser.showOpenDialog(window);
         if (jobClass != null)

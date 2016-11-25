@@ -29,11 +29,11 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
 
     /**
      * Starts RunnerServer
-     * @param args  args to the program, no meaning
+     * @param args  tasks classes
      * @throws RemoteException if it fails to start the server on network
      * @throws MalformedURLException it doesn't happen
      */
-    public static void main(String[] args) throws RemoteException, MalformedURLException {
+    public static void main(String[] args) throws Exception {
         System.out.println("RMI server started");
 
         try { //special exception handler for registry creation
@@ -51,6 +51,14 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         // Bind this object instance to the name "RmiServer"
         Naming.rebind("//localhost/RunnerServer", runnerServer);
         System.out.println("PeerServer bound in registry");
+
+        // add first tasks
+        if (args.length > 0){
+            for (String arg :
+                    args) {
+                runnerServer.putTask(new File(arg));
+            }
+        }
     }
 
     /**
@@ -65,7 +73,8 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
      * @throws Exception if file is not valid
      */
     public void putTask(File jobClass) throws Exception {
-        File url = jobClass.getParentFile();
+        System.out.println(jobClass.getAbsolutePath());
+        File url = jobClass.getAbsoluteFile().getParentFile();
         putTask(url, jobClass.getName().replaceAll("\\.class", ""));
     }
 
