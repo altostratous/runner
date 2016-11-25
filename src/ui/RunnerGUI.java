@@ -12,13 +12,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import service.RunnerClient;
 import service.RunnerServerInterface;
 import ui.views.LongTaskView;
 import util.LongTask;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 
@@ -29,12 +32,15 @@ public class RunnerGUI extends Application {
 
     private RunnerClient client;
 
+    private Window window;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException, NotBoundException {
+        window = primaryStage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("RunnerGUI.fxml"));
         loader.setController(this);
         loader.load();
@@ -50,5 +56,17 @@ public class RunnerGUI extends Application {
             }
         });
         client = new RunnerClient();
+    }
+
+    @FXML
+    public void addTask() throws MalformedURLException, ClassNotFoundException {
+        FileChooser fileChooser = new FileChooser();
+        File jobClass = fileChooser.showOpenDialog(window);
+        if (jobClass != null)
+            try {
+                client.addTask(jobClass);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }

@@ -1,5 +1,6 @@
 package service;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -13,5 +14,9 @@ public class RunnerClient {
     RunnerServerInterface server;
     public RunnerClient() throws RemoteException, NotBoundException, MalformedURLException {
         server = (RunnerServerInterface) Naming.lookup("//localhost/RunnerServer");
+    }
+
+    public void addTask(File jobClassFile) throws Exception {
+        server.addTask(jobClassFile);
     }
 }

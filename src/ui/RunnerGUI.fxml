@@ -23,6 +23,6 @@
             </VBox>
          </content>
       </ScrollPane>
-      <Button mnemonicParsing="false" text="+ Add Task" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" />
+      <Button mnemonicParsing="false" onAction="#addTask" text="+ Add Task" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" />
    </children>
 </AnchorPane>

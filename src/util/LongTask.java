@@ -1,5 +1,6 @@
 package util;
 
+import java.io.Serializable;
 import java.util.Observable;
 import java.util.SplittableRandom;
 
@@ -8,7 +9,7 @@ import java.util.SplittableRandom;
  * To run and manage your task, you have to implement this interface
  * and add the *.class file to the runner application.
  */
-public abstract class LongTask extends Observable implements Runnable{
+public abstract class LongTask extends Observable implements Runnable, Serializable{
     // flags
     protected boolean pleaseCancel;
     protected boolean pleasePause;

@@ -1,6 +1,9 @@
 package service;
 
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,5 +41,23 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         // Bind this object instance to the name "RmiServer"
         Naming.rebind("//localhost/RunnerServer", runnerServer);
         System.out.println("PeerServer bound in registry");
+    }
+
+
+
+    public void addTask(File jobClass) throws Exception {
+        File url = jobClass.getParentFile();
+        addTask(url, jobClass.getName().replaceAll("\\.class", ""));
+    }
+    public void addTask(File jobClass, String name) throws Exception {
+        if (jobClass.getParentFile() == null)
+            throw new Exception("Bad class.");
+        URL url = jobClass.getParentFile().toURI().toURL();
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
+        try {
+            urlClassLoader.loadClass(name);
+        }catch (Exception ex){
+            addTask(jobClass.getParentFile(), jobClass.getName() + "." + name);
+        }
     }
 }
