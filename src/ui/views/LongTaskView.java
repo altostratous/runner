@@ -26,6 +26,7 @@ public class LongTaskView extends AnchorPane implements Observer{
     private Button startButton;
     private Button pauseButton;
     private Button cancelButton;
+    private Button removeButton;
     private LongTask task;
     private RunnerClient client;
     private int id;
@@ -39,18 +40,29 @@ public class LongTaskView extends AnchorPane implements Observer{
         label = new Label("Not started yet.");
         name = new Label(task.getDisplayName());
         startButton = new Button("Start");
+        removeButton = new Button("Remove");
         pauseButton = new Button("Pause");
         cancelButton = new Button("Cancel");
+        removeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                           @Override
+                                           public void handle(MouseEvent event) {
+                                               try {
+                                                   removeButtonClicked();
+                                               } catch (RemoteException e) {
+                                                   e.printStackTrace();
+                                               }
+                                           }
+                                       });
         pauseButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                          @Override
-                                          public void handle(MouseEvent event) {
-                                              try {
-                                                  pauseButtonClicked();
-                                              } catch (RemoteException e) {
-                                                  e.printStackTrace();
-                                              }
-                                          }
-                                      });
+                    @Override
+                    public void handle(MouseEvent event) {
+                        try {
+                            pauseButtonClicked();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
         startButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                                             @Override
                                             public void handle(MouseEvent event) {
@@ -77,11 +89,14 @@ public class LongTaskView extends AnchorPane implements Observer{
         getChildren().add(startButton);
         getChildren().add(pauseButton);
         getChildren().add(cancelButton);
-        setRightAnchor(startButton, 10.);
+        getChildren().add(removeButton);
+        setRightAnchor(startButton, 71.);
         setBottomAnchor(startButton, 10.);
-        setRightAnchor(pauseButton, 65.);
+        setRightAnchor(pauseButton, 126.);
         setBottomAnchor(pauseButton, 10.);
-        setRightAnchor(cancelButton, 10.);
+        setRightAnchor(removeButton, 10.);
+        setBottomAnchor(removeButton, 10.);
+        setRightAnchor(cancelButton, 71.);
         setBottomAnchor(cancelButton, 10.);
         setBottomAnchor(label, 5.);
         setLeftAnchor(label, 10.);
@@ -94,6 +109,10 @@ public class LongTaskView extends AnchorPane implements Observer{
         setStyle(
                 "-fx-background-color: rgba(240,230,250,1);"
         );
+    }
+
+    private void removeButtonClicked() throws RemoteException {
+        client.removeTask(id);
     }
 
     private void startButtonClicked() throws RemoteException {
@@ -113,7 +132,8 @@ public class LongTaskView extends AnchorPane implements Observer{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("updating ui");
+                if (o == null)
+                    return;
                 LongTaskView.this.setTask((LongTask) o);
                 name.setText(task.getDisplayName());
                 label.setText(task.getStatus().toString());
@@ -147,6 +167,11 @@ public class LongTaskView extends AnchorPane implements Observer{
 
     public void setTask(LongTask task) {
         this.task = task;
-        task.addObserver(this);
+        if (task != null)
+            task.addObserver(this);
+    }
+
+    public void dispose() {
+
     }
 }

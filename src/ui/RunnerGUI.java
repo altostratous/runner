@@ -80,15 +80,29 @@ public class RunnerGUI extends Application implements Observer {
         for (Integer key :
                 tasks.keySet()) {
             if (!views.containsKey(key)) {
-                views.put(key, new LongTaskView(tasks.get(key), client, key));
+                if (tasks.get(key)!= null) {
+                    views.put(key, new LongTaskView(tasks.get(key), client, key));
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            tasksVBox.getChildren().add(views.get(key));
+                        }
+                    });
+                }
+            }
+            if (tasks.get(key) == null){
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        tasksVBox.getChildren().add(views.get(key));
+                        if (views.get(key)!= null) {
+                            views.get(key).dispose();
+                            tasksVBox.getChildren().remove(views.get(key));
+                        }
                     }
                 });
             }
-            views.get(key).update(tasks.get(key), null);
+            if (views.get(key)!= null)
+                views.get(key).update(tasks.get(key), null);
         }
     }
 }
