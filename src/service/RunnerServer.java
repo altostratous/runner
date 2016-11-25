@@ -21,12 +21,18 @@ import java.util.HashMap;
 public class RunnerServer extends UnicastRemoteObject implements RunnerServerInterface{
     /**
      * Creates a runner server on a specific port
-     * @throws RemoteException
+     * @throws RemoteException maybe
      */
     public RunnerServer() throws RemoteException {
         super(0);
     }
 
+    /**
+     * Starts RunnerServer
+     * @param args  args to the program, no meaning
+     * @throws RemoteException if it fails to start the server on network
+     * @throws MalformedURLException it doesn't happen
+     */
     public static void main(String[] args) throws RemoteException, MalformedURLException {
         System.out.println("RMI server started");
 
@@ -47,12 +53,28 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         System.out.println("PeerServer bound in registry");
     }
 
+    /**
+     * Tasks on the server
+     */
     ArrayList<LongTask> tasks = new ArrayList<>();
 
+
+    /**
+     * Registers a task to the server sending the address to the javaclass file
+     * @param   jobClass the file path to the class file
+     * @throws Exception if file is not valid
+     */
     public void putTask(File jobClass) throws Exception {
         File url = jobClass.getParentFile();
         putTask(url, jobClass.getName().replaceAll("\\.class", ""));
     }
+
+
+    /**
+     * Removes a task with a specific id
+     * @param id unique identifier for the task. This is assigned when task is registered on the server and can be
+     *           obtained calling getTasks method of the server
+     */
     @Override
     public void removeTask(Integer id) {
 
@@ -60,13 +82,27 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         tasks.set(id, null);
     }
 
+
+    /**
+     * Starts a task on the server
+     * @param id unique identifier for the task. This is assigned when task is registered on the server and can be
+     *           obtained calling getTasks method of the server
+     * @throws RemoteException
+     */
     @Override
     public void startTask(Integer id) throws RemoteException {
         tasks.get(id).restart();
     }
 
+
+    /**
+     * Sends cancellation request to the server for a specific task
+     * @param id unique identifier for the task. This is assigned when task is registered on the server and can be
+     *           obtained calling getTasks method of the server
+     * @throws RemoteException if doesn't supports cancellation
+     */
     @Override
-    public void cancellTask(Integer id) throws RemoteException {
+    public void cancelTask(Integer id) throws RemoteException {
         try {
             tasks.get(id).cancel();
         } catch (Exception e) {
@@ -74,6 +110,12 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         }
     }
 
+    /**
+     * Sends pause request to the server for a specific task
+     * @param id unique identifier for the task. This is assigned when task is registered on the server and can be
+     *           obtained calling getTasks method of the server
+     * @throws RemoteException
+     */
     @Override
     public void pauseTask(Integer id) throws RemoteException {
         try {
@@ -83,13 +125,25 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         }
     }
 
+    /**
+     * Sends resume request to the server
+     * @param id unique identifier for the task. This is assigned when task is registered on the server and can be
+     *           obtained calling getTasks method of the server
+     * @throws RemoteException
+     */
     @Override
     public void resumeTask(Integer id) throws RemoteException {
         tasks.get(id).restart();
     }
 
+    /**
+     * Obtains all tasks on the server
+     * @return a HashMap(Integer, LongTask) in which keys are unique identifiers for tasks. Removed tasks are null but
+     *         their id will be there
+     * @throws RemoteException maybe
+     */
     @Override
-    public HashMap<Integer, LongTask> getTasks() {
+    public HashMap<Integer, LongTask> getTasks() throws RemoteException{
         HashMap<Integer, LongTask> updatedTasks = new HashMap<>();
         for (int i = 0; i < tasks.size(); i++) {
             {
@@ -102,6 +156,12 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         return updatedTasks;
     }
 
+    /**
+     * The inner recursive function to find the class path of a specified java class
+     * @param jobClass file name of the class
+     * @param name name of the class
+     * @throws Exception If the file is not valid
+     */
     public void putTask(File jobClass, String name) throws Exception {
         if (jobClass.getParentFile() == null)
             throw new Exception("Bad class.");

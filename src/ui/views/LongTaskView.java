@@ -120,7 +120,7 @@ public class LongTaskView extends AnchorPane implements Observer{
     }
 
     private void cancelButtonClicked() throws RemoteException {
-        client.cancellTask(id);
+        client.cancelTask(id);
     }
 
     private void pauseButtonClicked() throws RemoteException {

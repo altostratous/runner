@@ -3,11 +3,12 @@ package example;
 import util.LongTask;
 import util.LongTaskStatus;
 
-import javax.management.ListenerNotFoundException;
 import java.io.Serializable;
 
 /**
- * Created by HP PC on 11/25/2016.
+ * Created this is an example of a long task that can be run using
+ * Runner project. You can create classes that extend LongTask and
+ * after compiling add them to the server to be run.
  */
 public class CountJob extends LongTask {
     {
@@ -17,6 +18,9 @@ public class CountJob extends LongTask {
         setDisplayName("CountJob");
     }
 
+    /**
+     * Terminates the task, by cancelling it.
+     */
     @Override
     public void terminate() {
         try {
@@ -33,13 +37,25 @@ public class CountJob extends LongTask {
         }
     }
 
+    /**
+     * A serializable inner class used to store the state of the task,
+     * so it can be guaranteed by the RunnerServer
+     */
     private static class CountJobState implements Serializable
     {
         public Integer number = 0;
     }
 
+
+    /**
+     * The main operation is done here. Here is a sample. It is a counter that counts
+     * to 100 with 500 milliseconds interval. Remember to set status just like bellow
+     * as it is changed otherwise the task is not considered as completed or ...
+     * In such case the task can only be terminated.
+     */
     @Override
     public void run() {
+        // main loop
         while (((CountJobState)getState()).number < 100)
         {
             ((CountJobState)getState()).number++;
@@ -54,6 +70,8 @@ public class CountJob extends LongTask {
             if (pleaseBreak())
                 break;
         }
+
+        // set the status
         if (pleasePause){
             setStatus(LongTaskStatus.Paused);
         }
