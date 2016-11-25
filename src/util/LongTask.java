@@ -10,5 +10,5 @@ import javafx.beans.Observable;
 public interface LongTask extends Runnable, Observable {
     void cancel();
     void start();
-    void setRunner(RunnerInterface runner);
+    int getProgress();
 }
