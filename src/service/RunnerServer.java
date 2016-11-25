@@ -1,8 +1,9 @@
 package service;
 
+import sun.reflect.generics.reflectiveObjects.LazyReflectiveObjectGenerator;
 import util.LongTask;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -11,6 +12,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -19,6 +21,17 @@ import java.util.HashMap;
  * implemented. Java RMI is used.
  */
 public class RunnerServer extends UnicastRemoteObject implements RunnerServerInterface{
+    /**
+     * Logs sth
+     * @param tolog
+     */
+    public static void log(String tolog) throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream("log.txt", true);
+        PrintStream printStream = new PrintStream(fileOutputStream);
+        printStream.println(new Date().toString() + "\t" + tolog);
+        fileOutputStream.close();
+    }
+
     /**
      * Creates a runner server on a specific port
      * @throws RemoteException maybe
@@ -51,7 +64,7 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         // Bind this object instance to the name "RmiServer"
         Naming.rebind("//localhost/RunnerServer", runnerServer);
         System.out.println("PeerServer bound in registry");
-
+        log("Server is up");
         // add first tasks
         if (args.length > 0){
             for (String arg :
@@ -73,7 +86,8 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
      * @throws Exception if file is not valid
      */
     public void putTask(File jobClass) throws Exception {
-        System.out.println(jobClass.getAbsolutePath());
+        RunnerServer.log("Adding task:");
+        RunnerServer.log(jobClass.getAbsolutePath());
         File url = jobClass.getAbsoluteFile().getParentFile();
         putTask(url, jobClass.getName().replaceAll("\\.class", ""));
     }
@@ -114,6 +128,7 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
     public void cancelTask(Integer id) throws RemoteException {
         try {
             tasks.get(id).cancel();
+            log("Cancelling task: " + id + "@" + tasks.get(id).getDisplayName());
         } catch (Exception e) {
             throw new RemoteException();
         }
