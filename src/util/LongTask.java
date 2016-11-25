@@ -78,4 +78,11 @@ public abstract class LongTask extends Observable implements Runnable, Serializa
     public double getProgress() {
         return progress;
     }
+
+    public LongTask(){
+        setChanged();
+        setStatus(LongTaskStatus.NotStartedYet);
+    }
+
+    public abstract void terminate();
 }

@@ -3,6 +3,7 @@ package ui;/**
  */
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,8 +25,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
-public class RunnerGUI extends Application {
+public class RunnerGUI extends Application implements Observer {
 
     @FXML
     private VBox tasksVBox;
@@ -56,6 +60,7 @@ public class RunnerGUI extends Application {
             }
         });
         client = new RunnerClient();
+        client.addObserver(this);
     }
 
     @FXML
@@ -68,5 +73,25 @@ public class RunnerGUI extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+    }
+
+    HashMap<Integer, LongTaskView> views = new HashMap<>();
+
+    @Override
+    public void update(Observable o, Object arg) {
+        HashMap<Integer, LongTask> tasks = (HashMap<Integer, LongTask>) arg;
+        for (Integer key :
+                tasks.keySet()) {
+            if (!views.containsKey(key)) {
+                views.put(key, new LongTaskView(tasks.get(key)));
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        tasksVBox.getChildren().add(views.get(key));
+                    }
+                });
+            }
+            views.get(key).update(tasks.get(key), null);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package service;
 
+import util.LongTask;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,6 +10,8 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Ali on 11/25/2016.
@@ -43,21 +47,47 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
         System.out.println("PeerServer bound in registry");
     }
 
+    ArrayList<LongTask> tasks = new ArrayList<>();
 
-
-    public void addTask(File jobClass) throws Exception {
+    public void putTask(File jobClass) throws Exception {
         File url = jobClass.getParentFile();
-        addTask(url, jobClass.getName().replaceAll("\\.class", ""));
+        putTask(url, jobClass.getName().replaceAll("\\.class", ""));
     }
-    public void addTask(File jobClass, String name) throws Exception {
+    @Override
+    public void removeTask(Integer id) {
+
+        tasks.get(id).terminate();
+        tasks.set(id, null);
+    }
+
+    @Override
+    public HashMap<Integer, LongTask> getTasks() {
+        HashMap<Integer, LongTask> updatedTasks = new HashMap<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            {
+                updatedTasks.put(i, tasks.get(i));
+                if (tasks.get(i) != null) {
+                    tasks.get(i).notifyObservers();
+                }
+            }
+        }
+        return updatedTasks;
+    }
+
+    public void putTask(File jobClass, String name) throws Exception {
         if (jobClass.getParentFile() == null)
             throw new Exception("Bad class.");
         URL url = jobClass.getParentFile().toURI().toURL();
+
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{url});
         try {
-            urlClassLoader.loadClass(name);
+            Class<? extends LongTask> longTaskClass = (Class<? extends LongTask>) urlClassLoader.loadClass(name);
+            LongTask task = longTaskClass.newInstance();
+            tasks.add(task);
+            // return tasks.get(tasks.size() - 1);
         }catch (Exception ex){
-            addTask(jobClass.getParentFile(), jobClass.getName() + "." + name);
+            putTask(jobClass.getParentFile(), jobClass.getName() + "." + name);
         }
+        // return null;
     }
 }
