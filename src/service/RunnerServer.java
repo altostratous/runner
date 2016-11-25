@@ -61,6 +61,34 @@ public class RunnerServer extends UnicastRemoteObject implements RunnerServerInt
     }
 
     @Override
+    public void startTask(Integer id) throws RemoteException {
+        tasks.get(id).restart();
+    }
+
+    @Override
+    public void cancellTask(Integer id) throws RemoteException {
+        try {
+            tasks.get(id).cancel();
+        } catch (Exception e) {
+            throw new RemoteException();
+        }
+    }
+
+    @Override
+    public void pauseTask(Integer id) throws RemoteException {
+        try {
+            tasks.get(id).pause();
+        } catch (Exception e) {
+            throw  new RemoteException();
+        }
+    }
+
+    @Override
+    public void resumeTask(Integer id) throws RemoteException {
+        tasks.get(id).restart();
+    }
+
+    @Override
     public HashMap<Integer, LongTask> getTasks() {
         HashMap<Integer, LongTask> updatedTasks = new HashMap<>();
         for (int i = 0; i < tasks.size(); i++) {

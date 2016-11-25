@@ -13,5 +13,9 @@ import java.util.HashMap;
 public interface RunnerServerInterface extends Remote {
     void putTask(File jobClassFile) throws Exception;
     void removeTask(Integer id) throws RemoteException;
+    void startTask(Integer id) throws RemoteException;
+    void cancellTask(Integer id) throws RemoteException;
+    void pauseTask(Integer id) throws RemoteException;
+    void resumeTask(Integer id) throws RemoteException;
     HashMap<Integer,LongTask> getTasks() throws RemoteException;
 }

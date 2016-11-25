@@ -1,6 +1,7 @@
 package util;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.SplittableRandom;
 
@@ -85,4 +86,20 @@ public abstract class LongTask extends Observable implements Runnable, Serializa
     }
 
     public abstract void terminate();
+
+    private Thread thread;
+
+    public void restart() throws RemoteException {
+        if (thread != null){
+            if (thread.isAlive())
+                try {
+                    throw new Exception("Job is still running.");
+                } catch (Exception e) {
+                    throw new RemoteException();
+                }
+        }
+        thread = new Thread(this);
+        thread.setDaemon(true);
+        thread.start();
+    }
 }
