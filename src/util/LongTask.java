@@ -87,7 +87,7 @@ public abstract class LongTask extends Observable implements Runnable, Serializa
 
     public abstract void terminate();
 
-    private Thread thread;
+    private transient Thread thread;
 
     public void restart() throws RemoteException {
         if (thread != null){
@@ -101,5 +101,7 @@ public abstract class LongTask extends Observable implements Runnable, Serializa
         thread = new Thread(this);
         thread.setDaemon(true);
         thread.start();
+        setStatus(LongTaskStatus.Running);
+        setChanged();
     }
 }

@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * Created by Ali on 11/25/2016.
  * Java RMI is used.
  */
-public class RunnerClient extends Observable{
+public class RunnerClient extends Observable implements RunnerServerInterface{
     RunnerServerInterface server;
     Timer timer;
     public RunnerClient() throws RemoteException, NotBoundException, MalformedURLException {
@@ -37,7 +37,38 @@ public class RunnerClient extends Observable{
         },0, 500);
     }
 
-    public void addTask(File jobClassFile) throws Exception {
+    public void putTask(File jobClassFile) throws Exception {
         server.putTask(jobClassFile);
+    }
+
+
+    @Override
+    public void removeTask(Integer id) throws RemoteException {
+        server.removeTask(id);
+    }
+
+    @Override
+    public void startTask(Integer id) throws RemoteException {
+        server.startTask(id);
+    }
+
+    @Override
+    public void cancellTask(Integer id) throws RemoteException {
+        server.cancellTask(id);
+    }
+
+    @Override
+    public void pauseTask(Integer id) throws RemoteException {
+        server.pauseTask(id);
+    }
+
+    @Override
+    public void resumeTask(Integer id) throws RemoteException {
+        server.resumeTask(id);
+    }
+
+    @Override
+    public HashMap<Integer, LongTask> getTasks() throws RemoteException {
+        return server.getTasks();
     }
 }

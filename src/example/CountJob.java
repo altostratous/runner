@@ -47,6 +47,9 @@ public class CountJob extends LongTask {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.out.println(progress);
+            progress = ((CountJobState)getState()).number / 100.0;
+            setChanged();
         }
     }
 }

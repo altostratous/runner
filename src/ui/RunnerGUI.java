@@ -4,7 +4,6 @@ package ui;/**
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,14 +15,12 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import service.RunnerClient;
-import service.RunnerServerInterface;
 import ui.views.LongTaskView;
 import util.LongTask;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.util.HashMap;
 import java.util.Observable;
@@ -69,7 +66,7 @@ public class RunnerGUI extends Application implements Observer {
         File jobClass = fileChooser.showOpenDialog(window);
         if (jobClass != null)
             try {
-                client.addTask(jobClass);
+                client.putTask(jobClass);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -83,7 +80,7 @@ public class RunnerGUI extends Application implements Observer {
         for (Integer key :
                 tasks.keySet()) {
             if (!views.containsKey(key)) {
-                views.put(key, new LongTaskView(tasks.get(key)));
+                views.put(key, new LongTaskView(tasks.get(key), client, key));
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
