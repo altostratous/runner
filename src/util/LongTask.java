@@ -98,6 +98,7 @@ public abstract class LongTask extends Observable implements Runnable, Serializa
                     throw new RemoteException();
                 }
         }
+        pleaseCancel = pleasePause = false;
         thread = new Thread(this);
         thread.setDaemon(true);
         thread.start();

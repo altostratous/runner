@@ -3,6 +3,7 @@ package example;
 import util.LongTask;
 import util.LongTaskStatus;
 
+import javax.management.ListenerNotFoundException;
 import java.io.Serializable;
 
 /**
@@ -50,6 +51,22 @@ public class CountJob extends LongTask {
             System.out.println(progress);
             progress = ((CountJobState)getState()).number / 100.0;
             setChanged();
+            if (pleaseBreak())
+                break;
         }
+        if (pleasePause){
+            setStatus(LongTaskStatus.Paused);
+        }
+        if (pleaseCancel){
+            setStatus(LongTaskStatus.Cancelled);
+            progress = 0;
+            setState(new CountJobState());
+        }
+        if (!pleaseBreak())
+        {
+            setStatus(LongTaskStatus.Completed);
+            setState(new CountJobState());
+        }
+        setChanged();
     }
 }

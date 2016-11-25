@@ -75,8 +75,14 @@ public class LongTaskView extends AnchorPane implements Observer{
         getChildren().add(name);
         getChildren().add(label);
         getChildren().add(startButton);
+        getChildren().add(pauseButton);
+        getChildren().add(cancelButton);
         setRightAnchor(startButton, 10.);
         setBottomAnchor(startButton, 10.);
+        setRightAnchor(pauseButton, 65.);
+        setBottomAnchor(pauseButton, 10.);
+        setRightAnchor(cancelButton, 10.);
+        setBottomAnchor(cancelButton, 10.);
         setBottomAnchor(label, 5.);
         setLeftAnchor(label, 10.);
         setBottomAnchor(name, 25.);
@@ -107,6 +113,7 @@ public class LongTaskView extends AnchorPane implements Observer{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                System.out.println("updating ui");
                 LongTaskView.this.setTask((LongTask) o);
                 name.setText(task.getDisplayName());
                 label.setText(task.getStatus().toString());
