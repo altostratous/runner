@@ -13,22 +13,28 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import service.RunnerClient;
+import service.RunnerServerInterface;
 import ui.views.LongTaskView;
 import util.LongTask;
 
 import java.io.IOException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 
 public class RunnerGUI extends Application {
 
     @FXML
     private VBox tasksVBox;
 
+    private RunnerClient client;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException, NotBoundException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("RunnerGUI.fxml"));
         loader.setController(this);
         loader.load();
@@ -43,5 +49,6 @@ public class RunnerGUI extends Application {
                 System.exit(0);
             }
         });
+        client = new RunnerClient();
     }
 }

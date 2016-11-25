@@ -12,6 +12,6 @@ import java.rmi.RemoteException;
 public class RunnerClient {
     RunnerServerInterface server;
     public RunnerClient() throws RemoteException, NotBoundException, MalformedURLException {
-        server = (RunnerServerInterface) Naming.lookup("//localhost/RmiServer");
+        server = (RunnerServerInterface) Naming.lookup("//localhost/RunnerServer");
     }
 }
