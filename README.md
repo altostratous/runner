@@ -10,9 +10,10 @@ you can run long tasks and monitor each task. The complete doc is created using 
 	GIT on private GitHub repository:
 	    https://github.com/altostratous/runner.git
 
-# Tet
+## Tet
 Go to folder:
     out/production/runner/example
 And run
     test_all.cmd
-You can work with the GUI and test the software.
+You can work with the GUI and test the software. You can close the GUI and start it by running start_gui.cmd to test if
+tasks are running session independent.
